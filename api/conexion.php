@@ -1,28 +1,22 @@
 <?php
-// No usamos config.php porque no se sube a GitHub por consigna.
-// Leemos directo de las Variables de Entorno de Railway
+$host = $_ENV['DB_HOST'] ?? getenv('DB_HOST');
+$port = $_ENV['DB_PORT'] ?? getenv('DB_PORT');
+$db   = $_ENV['DB_NAME'] ?? getenv('DB_NAME');
+$user = $_ENV['DB_USER'] ?? getenv('DB_USER');
+$pass = $_ENV['DB_PASSWORD'] ?? getenv('DB_PASSWORD');
 
-if (getenv('ENTORNO') === 'produccion' || getenv('MYSQLHOST')) {
-    ini_set("display_errors", "0");
-    ini_set("log_errors", "1");
-}
-
-// Si las variables vienen de Railway (MYSQLHOST) o de tu config local
-$host = getenv('MYSQLHOST') ?: (defined('DB_HOST') ? DB_HOST : 'localhost');
-$port = getenv('MYSQLPORT') ?: (defined('DB_PORT') ? DB_PORT : '3306');
-$dbname = getenv('MYSQL_DATABASE') ?: getenv('MYSQLDATABASE') ?: (defined('DB_NAME') ? DB_NAME : 'railway');
-$user = getenv('MYSQLUSER') ?: (defined('DB_USER') ? DB_USER : 'root');
-$pass = getenv('MYSQLPASSWORD') ?: (defined('DB_PASS') ? DB_PASS : '');
+if (!$host) { $host = 'localhost'; }
 
 try {
-    $conexion = new PDO(
-        "mysql:host=" . $host . ";port=" . $port . ";dbname=" . $dbname,
-        $user,
-        $pass,
-        [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]
-    );
+    $dsn = "mysql:host=$host;port=$port;dbname=$db;charset=utf8mb4";
+    $pdo = new PDO($dsn, $user, $pass, [
+        PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+        PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC
+    ]);
 } catch (PDOException $e) {
-    error_log("Conexión fallida: " . $e->getMessage());
-    // No mostramos el error al usuario en producción
-    die("Error de conexión a la base de datos");
+    error_log("Conexion fallida: " . $e->getMessage());
+    http_response_code(500);
+    echo json_encode(["error" => "Conexion fallida: " . $e->getMessage()]);
+    exit;
 }
+?>
