@@ -1,0 +1,491 @@
+/* ========== 1. colores y variables ========== */
+:root {
+  --celeste: #74acdf;
+  --fondo: #f4f8fc;
+  --superficie: #ffffff;
+  --texto: #1b2733;
+  --suave: #5a6b7b;
+  --linea: #d6e1ec;
+  --primario: #1b6ca8;
+  --primario-hover: #14507f;
+  --peligro: #b3261e;
+  --peligro-fondo: #fdecea;
+  --stock-bajo: #8a5a00;
+  --ok: #1a5d1a;
+  --ok-fondo: #d1f0d1;
+  --radio: 6px;
+}
+
+/* ========== 2. base ========== */
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--fondo);
+  color: var(--texto);
+  font-family: "Segoe UI", system-ui, -apple-system, Roboto, sans-serif;
+  line-height: 1.5;
+}
+
+/* main */
+main {
+  max-width: 880px;
+  margin: 0 auto;
+  padding: 0 1rem 3rem;
+}
+
+/* hidden */
+[hidden] {
+  display: none !important;
+}
+
+/* ========== 3. cabecera y barra superior ========== */
+
+.cabecera {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: var(--fondo);
+  transition: top .25s ease, box-shadow .25s ease;
+}
+
+.cabecera.con-sombra {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, .08);
+}
+
+.cabecera.oculta {
+  top: calc(-1 * var(--alto-cabecera, 300px));
+  box-shadow: none;
+}
+
+#panel {
+  max-width: 880px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+/* barra de arriba */
+.barra {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  max-width: 880px;
+  margin: 0 auto;
+  padding: 1.25rem 1rem;
+}
+
+.barra h1 {
+  margin: 0;
+  font-size: 1.6rem;
+  letter-spacing: -0.01em;
+}
+
+.subtitulo {
+  margin: .15rem 0 0;
+  color: var(--suave);
+  font-size: .95rem;
+}
+
+/* ========== 4. tarjetas de resumen ========== */
+
+.resumen {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: .75rem;
+  margin-bottom: 1rem;
+}
+
+.tarjeta {
+  font: inherit;
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+  padding: .8rem 1rem;
+  background: var(--superficie);
+  color: var(--texto);
+  border: 1px solid var(--linea);
+  border-radius: var(--radio);
+  cursor: pointer;
+}
+
+.tarjeta:hover {
+  border-color: var(--suave);
+}
+
+.tarjeta.activa {
+  border-color: var(--primario);
+  box-shadow: 0 0 0 1px var(--primario);
+}
+
+.tarjeta:focus-visible,
+.buscador:focus-visible {
+  outline: 3px solid var(--celeste);
+  outline-offset: 2px;
+}
+
+.cifra {
+  font-size: 1.6rem;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.cifra.alerta {
+  color: var(--stock-bajo);
+}
+
+.cifra.peligro {
+  color: var(--peligro);
+}
+
+.rotulo {
+  color: var(--suave);
+  font-size: .9rem;
+}
+
+/* ========== 5. buscador ========== */
+
+.buscador {
+  width: 100%;
+  margin-bottom: 1rem;
+  padding: .65rem .8rem;
+  font: inherit;
+  background: var(--superficie);
+  color: var(--texto);
+  border: 1px solid var(--linea);
+  border-radius: var(--radio);
+}
+
+/* ========== 6. tabla de productos ========== */
+
+/* tabla */
+.tabla-wrap {
+  overflow-x: auto;
+  background: var(--superficie);
+  border: 1px solid var(--linea);
+  border-radius: var(--radio);
+}
+
+.tabla-wrap:has(#tabla[hidden]) {
+  display: none;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th,
+td {
+  padding: .75rem 1rem;
+  text-align: left;
+  border-bottom: 1px solid var(--linea);
+}
+
+tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+th {
+  font-weight: 600;
+  color: var(--suave);
+  font-size: .9rem;
+}
+
+.num {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.acciones {
+  text-align: right;
+  white-space: nowrap;
+}
+
+.acciones .btn+.btn {
+  margin-left: .4rem;
+}
+
+#seccion-mapa:not(:empty) {
+  margin-top: 1.5rem;
+}
+
+/* celdas */
+.codigo {
+  font-family: ui-monospace, Consolas, monospace;
+  font-size: .85rem;
+  word-break: break-all;
+}
+
+td.num {
+  white-space: nowrap;
+}
+
+.valor {
+  display: flex;
+  flex-direction: column;
+  gap: .2rem;
+}
+
+.num .valor {
+  align-items: flex-end;
+}
+
+.etiqueta {
+  display: inline-block;
+  width: fit-content;
+  padding: .05rem .55rem;
+  border-radius: 999px;
+  font-size: .75rem;
+  font-weight: 600;
+}
+
+.etiqueta.alerta {
+  background: #fdf0d5;
+  color: var(--stock-bajo);
+}
+
+.etiqueta.peligro {
+  background: var(--peligro-fondo);
+  color: var(--peligro);
+}
+
+.etiqueta.ok {
+  background: #d1f0d1;
+  color: #1a5d1a;
+}
+
+/* ========== 7. botones ========== */
+
+.btn {
+  font: inherit;
+  padding: .55rem 1rem;
+  border: 1px solid var(--linea);
+  border-radius: var(--radio);
+  background: var(--superficie);
+  color: var(--texto);
+  cursor: pointer;
+}
+
+.btn:hover {
+  border-color: var(--suave);
+}
+
+.btn:focus-visible,
+input:focus-visible {
+  outline: 3px solid var(--celeste);
+  outline-offset: 2px;
+}
+
+.btn[disabled] {
+  opacity: .6;
+  cursor: wait;
+}
+
+.btn-primario {
+  background: var(--primario);
+  border-color: var(--primario);
+  color: #fff;
+}
+
+.btn-primario:hover {
+  background: var(--primario-hover);
+  border-color: var(--primario-hover);
+}
+
+.btn-peligro {
+  background: var(--peligro);
+  border-color: var(--peligro);
+  color: #fff;
+}
+
+.btn-chico {
+  padding: .3rem .65rem;
+  font-size: .9rem;
+}
+
+/* ========== 8. ventanas y formulario ========== */
+
+/* ventanas */
+dialog {
+  border: 0;
+  border-radius: 10px;
+  padding: 1.5rem;
+  width: min(420px, calc(100vw - 2rem));
+  box-shadow: 0 10px 40px rgba(0, 0, 0, .25);
+}
+
+dialog::backdrop {
+  background: rgba(20, 30, 25, .45);
+}
+
+dialog h2 {
+  margin: 0 0 1rem;
+  font-size: 1.2rem;
+}
+
+dialog:has(.grilla) {
+  width: 100%;
+  max-width: 100%;
+  height: 100%;
+  max-height: 100%;
+  margin: 0;
+  border-radius: 0;
+}
+
+/* formulario */
+form label {
+  display: block;
+  margin-top: .9rem;
+  font-weight: 600;
+  font-size: .95rem;
+}
+
+form input {
+  width: 100%;
+  margin-top: .25rem;
+  padding: .55rem .7rem;
+  font: inherit;
+  border: 1px solid var(--linea);
+  border-radius: var(--radio);
+}
+
+form input.invalido {
+  border-color: var(--peligro);
+}
+
+.error-campo {
+  display: block;
+  min-height: 1.2em;
+  color: var(--peligro);
+  font-size: .85rem;
+}
+
+.botonera {
+  display: flex;
+  justify-content: flex-end;
+  gap: .6rem;
+  margin-top: 1.25rem;
+}
+
+
+/* ========== 9. avisos y textos auxiliares ========== */
+
+.aviso,
+.error-form {
+  background: var(--peligro-fondo);
+  color: var(--peligro);
+  border-left: 4px solid var(--peligro);
+  padding: .7rem 1rem;
+  border-radius: var(--radio);
+  margin: 0 0 1rem;
+}
+
+.estado {
+  color: var(--suave);
+}
+
+/* textos chicos */
+.detalle {
+  color: var(--suave);
+  font-size: .85rem;
+}
+
+.opcional {
+  color: var(--suave);
+  font-weight: 400;
+  font-size: .85rem;
+}
+
+.nota {
+  margin: .6rem 0 0;
+  color: var(--suave);
+  font-size: .85rem;
+}
+
+/* mensaje de confirmación */
+.toast {
+  position: fixed;
+  left: 50%;
+  bottom: 1.5rem;
+  transform: translateX(-50%);
+  background: var(--texto);
+  color: #fff;
+  padding: .65rem 1.1rem;
+  border-radius: var(--radio);
+  max-width: calc(100vw - 2rem);
+}
+
+/* para lectores de pantalla */
+.visualmente-oculto {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+/* ========== 10. footer pantalla principal - Grupo 20 ========== */
+
+.footer-zafe {
+  text-align: center;
+  padding: 16px 0;
+  font-size: 12px;
+}
+
+/* ======================== 11. responsive ====================== */
+
+/* celular y tablet chica - hasta 640px */
+@media (max-width: 640px) {
+  /* tarjetas más compactas */
+  .resumen { gap: .5rem; }
+  .tarjeta { padding: .6rem .7rem; }
+  .cifra { font-size: 1.3rem; }
+  .rotulo { font-size: .8rem; }
+
+  /* tabla pasa a modo lista */
+  thead { display: none; }
+  table, tbody, tr, td { display: block; }
+  tr { padding: .8rem 1rem; border-bottom: 1px solid var(--linea); }
+  tbody tr:last-child { border-bottom: 0; }
+  td { display: flex; justify-content: space-between; align-items: baseline; gap: 1rem; padding: .25rem 0; border: 0; text-align: right; }
+  td[data-label]::before { content: attr(data-label); color: var(--suave); font-size: .85rem; text-align: left; flex-shrink: 0; }
+  td:first-child { display: block; text-align: left; padding-bottom: .4rem; }
+  td.acciones { justify-content: flex-start; padding-top: .6rem; gap: .6rem; }
+  td.acciones .btn { flex: 1; }
+  .acciones .btn + .btn { margin-left: 0; }
+  .btn-chico { padding: .55rem 1.1rem; }
+
+  /* cabecera y botón nuevo flotante en celular */
+  .subtitulo { display: none; }
+  .barra { padding: .75rem 1rem; }
+  main { padding-bottom: 6rem; }
+  .toast { bottom: 5.5rem; }
+  #btn-nuevo {
+    position: fixed; right: 1rem; bottom: calc(1rem + env(safe-area-inset-bottom, 0px)); z-index: 5;
+    padding: .85rem 1.3rem; border-radius: 999px; font-weight: 600;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, .25);
+  }
+
+  /* formulario a pantalla completa en celular */
+  dialog:has(.grilla) {
+    width: 100%; max-width: 100%; height: 100%; max-height: 100%;
+    margin: 0; border-radius: 0;
+  }
+  #form .botonera { padding-bottom: calc(.75rem + env(safe-area-inset-bottom, 0px)); }
+}
+
+/* celular chico - hasta 520px */
+@media (max-width: 520px) {
+  /* formulario de 2 columnas pasa a 1 */
+  .grilla { grid-template-columns: 1fr; }
+  .error-campo { min-height: 0; }
+}
+
+/* accesibilidad - si el usuario pide menos animaciones */
+@media (prefers-reduced-motion: reduce) {
+  .cabecera { transition: none; }
+}

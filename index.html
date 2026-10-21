@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#74acdf">
+  <title>ZAFE - Gestor de stock</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+  <!-- ================================================================== -->
+  <!-- CABECERA PRINCIPAL ZAFE - Contiene logo, titulo y acciones top     -->
+  <!-- ================================================================== -->
+  <div class="cabecera" id="cabecera">
+    <!-- Barra superior: logo ZAFE + titulo + boton nuevo producto -->
+    <header class="barra">
+      <div style="display:flex; align-items:center; gap:12px;">
+        <!-- LOGO ZAFE - dibujito, no toca tu CSS -->
+        <div
+          style="width:42px; height:42px; background:#c1c2c4; border-radius:50%; display:grid; place-items:center; color:white; font-weight:800; font-size:22px; flex-shrink:0;">
+          Z</div>
+        <div>
+          <h1>ZAFE</h1>
+          <p class="subtitulo">Controlá tu inventario, los vencimientos y la reposición.</p>
+        </div>
+      </div>
+      <!-- Boton que abre el dialog #dlg-form para crear producto -->
+      <button id="btn-nuevo" class="btn btn-primario" type="button">+ Producto</button>
+    </header>
+
+   
+    <!-- Panel de resumen y filtros: se muestra despues de cargar datos -->
+    <div id="panel" hidden>
+      <div class="resumen">
+        <!-- Tarjeta filtro: muestra todos los productos -->
+        <button type="button" class="tarjeta" data-filtro="todos">
+          <span class="cifra" id="r-total">0</span><span class="rotulo">Productos</span>
+        </button>
+         <!-- Tarjeta filtro: filtra productos con stock bajo -->
+        <button type="button" class="tarjeta" data-filtro="bajo">
+          <span class="cifra alerta" id="r-bajo">0</span><span class="rotulo">Con stock bajo</span>
+        </button>
+        <!-- Tarjeta filtro: filtra productos vencidos -->
+        <button type="button" class="tarjeta" data-filtro="vencidos">
+          <span class="cifra peligro" id="r-vencidos">0</span><span class="rotulo">Vencidos</span>
+        </button>
+      </div>
+       <!-- Input de busqueda en tiempo real, filtrado por JS -->
+      <input id="buscador" class="buscador" type="search" placeholder="Buscar productos…" aria-label="Buscar productos">
+    </div>
+  </div>
+
+  <!-- ================================================================== -->
+  <!-- MAIN - Contenido principal de la app                               -->
+  <!-- ================================================================== -->
+  <main>
+    <!-- Contenedor para avisos/mensajes generales de sistema -->
+    <div id="aviso" class="aviso" role="alert" hidden></div>
+
+    <!-- Estado de carga inicial -->
+    <p id="estado" class="estado">Cargando productos…</p>
+
+     <!-- Tabla de productos: se llena dinamicamente desde app.js -->
+    <div class="tabla-wrap">
+      <table id="tabla" hidden>
+        <thead>
+          <tr>
+            <th>Producto</th>
+            <th>Código de barras</th>
+            <th class="num">Stock</th>
+            <th class="num">Precio unit.</th>
+            <th class="num">Precio USD (ref.)</th>
+            <th>Vencimiento</th>
+            <!-- Accesibilidad: el título "Acciones" está oculto visualmente para 
+            no recargar la tabla, pero se mantiene para los lectores de pantalla-->
+            <th class="acciones"><span class="visualmente-oculto">Acciones</span></th>
+          </tr>
+        </thead>
+        <!-- Tbody donde app.js inserta las filas con id="lista" -->
+        <tbody id="lista"></tbody>
+      </table>
+    </div>
+    <!-- Nota de cotizacion dolar, se actualiza via API -->
+    <p id="nota-cotizacion" class="nota" hidden></p>
+
+    <!-- ================================================================== -->
+    <!-- DIALOG FORMULARIO - Crear / Editar producto                        -->
+    <!-- ================================================================== -->
+    <dialog id="dlg-form">
+      <form id="form" novalidate autocomplete="off">
+        <h2 id="form-titulo">Nuevo producto</h2>
+        <!-- Input oculto para guardar ID cuando se edita -->
+        <input type="hidden" id="f-id">
+
+        <div class="grilla">
+          <div class="campo ancho">
+            <label for="f-nombre">Nombre</label>
+            <input id="f-nombre" name="nombre" type="text" maxlength="200" required>
+            <small class="error-campo" data-campo="nombre"></small>
+          </div>
+
+          <div class="campo ancho">
+            <label for="f-codigo">Código de barras</label>
+            <input id="f-codigo" name="codigo_barras" type="text" maxlength="200" required>
+            <small class="error-campo" data-campo="codigo_barras"></small>
+          </div>
+
+          <div class="campo">
+            <label for="f-stock">Cantidad en stock</label>
+            <input id="f-stock" name="cantidad_stock" type="number" min="0" step="1" inputmode="numeric" required>
+            <small class="error-campo" data-campo="cantidad_stock"></small>
+          </div>
+
+          <div class="campo">
+            <label for="f-minimo">Stock mínimo</label>
+            <input id="f-minimo" name="stock_minimo" type="number" min="0" step="1" inputmode="numeric" required>
+            <small class="error-campo" data-campo="stock_minimo"></small>
+          </div>
+
+          <div class="campo">
+            <label for="f-precio">Precio unitario</label>
+            <input id="f-precio" name="precio_unitario" type="number" min="0" step="0.01" inputmode="decimal" required>
+            <small class="error-campo" data-campo="precio_unitario"></small>
+          </div>
+
+          <div class="campo">
+            <label for="f-vencimiento">Vencimiento <span class="opcional">(opcional)</span></label>
+            <input id="f-vencimiento" name="fecha_vencimiento" type="date">
+            <small class="error-campo" data-campo="fecha_vencimiento"></small>
+          </div>
+
+          <div class="campo">
+            <label for="f-proveedor">Proveedor</label>
+            <input id="f-proveedor" name="proveedor" type="text" maxlength="200" required>
+            <small class="error-campo" data-campo="proveedor"></small>
+          </div>
+
+          <div class="campo">
+            <label for="f-ubicacion">Ubicación</label>
+            <input id="f-ubicacion" name="ubicacion" type="text" maxlength="200" required>
+            <small class="error-campo" data-campo="ubicacion"></small>
+          </div>
+        </div>
+
+        <!-- Mensaje de error general del formulario -->
+        <p id="form-error" class="error-form" role="alert" hidden></p>
+
+        <div class="botonera">
+          <button type="button" class="btn" id="btn-cancelar">Cancelar</button>
+          <button type="submit" class="btn btn-primario" id="btn-guardar">Guardar</button>
+        </div>
+      </form>
+    </dialog>
+
+    <!-- ================================================================== -->
+    <!-- DIALOG BORRAR - Confirmacion para eliminar producto                -->
+    <!-- ================================================================== -->
+    <dialog id="dlg-borrar">
+      <h2>Borrar producto</h2>
+      <p id="borrar-texto"></p>
+      <div class="botonera">
+        <button type="button" class="btn" id="borrar-no">Cancelar</button>
+        <button type="button" class="btn btn-peligro" id="borrar-si">Borrar</button>
+      </div>
+    </dialog>
+
+
+    <!-- Toast para mensajes de confirmacion tipo "Producto guardado" -->
+    <div id="toast" class="toast" role="status" hidden></div>
+
+    <footer class="footer-zafe">© 2026 ZAFE - Grupo 20</footer>
+
+    <!-- JS principal que maneja toda la logica del stock -->
+    <script src="app.js"></script>
+</body>
+
+</html>
