@@ -6,7 +6,6 @@
 // ------------------------------------------------------------------
 // 1. CONFIGURACION - URLs de la API
 // ------------------------------------------------------------------
-// Mismo dominio, sin CORS. Si uso live server: http://localhost/zafe/api/productos.php
 const URL_API = 'api/productos.php';
 const URL_COTIZACION = 'api/cotizacion.php';
 
@@ -28,12 +27,11 @@ const campos = el.form.elements;
 // ------------------------------------------------------------------
 let productos = [];
 let idParaBorrar = null;
-let cotizacion = null; // pesos por dólar, se obtiene de la API
+let cotizacion = null;
 
 // ------------------------------------------------------------------
 // 4. API FETCH - Conexion con el backend
 // ------------------------------------------------------------------
-// Hace fetch a la api y tira error si la respuesta no es ok
 async function apiFetch(url, metodo, cuerpo) {
   let respuesta;
   try {
@@ -59,7 +57,6 @@ async function apiFetch(url, metodo, cuerpo) {
   return datos;
 }
 
-// Traduce codigos de estado HTTP a mensajes para el usuario
 function mensajeDeEstado(status, datos) {
   if (datos && datos.error) return datos.error;
   if (status === 400 || status === 422) return 'Hay datos inválidos. Revisá el formulario.';
@@ -67,7 +64,6 @@ function mensajeDeEstado(status, datos) {
   if (status >= 500) return 'Falló el servidor. Probá de nuevo en unos minutos.';
   return 'Ocurrió un error inesperado (código ' + status + ').';
 }
-
 
 // ------------------------------------------------------------------
 // 5. AVISOS Y TOAST - Mensajes al usuario
@@ -86,7 +82,6 @@ function mostrarToast(texto) {
 // ------------------------------------------------------------------
 // 6. COTIZACION - Obtiene valor del dolar
 // ------------------------------------------------------------------
-// Devuelve {"cotizacion": numero} o null si falla
 async function obtenerCotizacion() {
   try {
     const datos = await apiFetch(URL_COTIZACION);
@@ -98,15 +93,20 @@ async function obtenerCotizacion() {
 }
 
 // ------------------------------------------------------------------
-// 7. CARGA DE PRODUCTOS - Trae datos del backend
+// 7. CARGA DE PRODUCTOS - Trae datos del backend - CORREGIDO
 // ------------------------------------------------------------------
 async function cargarProductos() {
   el.estado.textContent = 'Cargando productos…';
   el.estado.hidden = false;
   try {
-    const resultados = await Promise.all([apiFetch(URL_API), cotizacion || obtenerCotizacion()]);
-    cotizacion = resultados[1];
-    productos = Array.isArray(resultados[0]) ? resultados[0] : [];
+    const datosProductos = await apiFetch(URL_API);
+    productos = Array.isArray(datosProductos) ? datosProductos : [];
+
+    if (!cotizacion) {
+      const nuevaCoti = await obtenerCotizacion();
+      if (nuevaCoti) cotizacion = nuevaCoti;
+    }
+
     ocultarAviso();
     dibujarLista();
   } catch (e) {
@@ -121,15 +121,12 @@ async function cargarProductos() {
 // ------------------------------------------------------------------
 // 8. FILTROS Y BUSCADOR - Logica de filtrado local
 // ------------------------------------------------------------------
-let filtro = 'todos'; // todos, bajo o vencidos
+let filtro = 'todos';
 let busqueda = '';
 
-// Stock bajo si es menor o igual al mínimo definido
 const esBajo = (p) => Number(p.cantidad_stock) <= Number(p.stock_minimo);
-// Vencido si tiene fecha y es menor a hoy
 const esVencido = (p, hoy) => Boolean(p.fecha_vencimiento) && p.fecha_vencimiento < hoy;
 
-// Verifica si un producto coincide con el filtro y busqueda actual
 function coincide(p, hoy) {
   if (filtro === 'bajo' && !esBajo(p)) return false;
   if (filtro === 'vencidos' && !esVencido(p, hoy)) return false;
@@ -138,7 +135,6 @@ function coincide(p, hoy) {
   return texto.includes(busqueda);
 }
 
-// Actualiza los contadores de las tarjetas superiores
 function actualizarResumen(hoy) {
   $('r-total').textContent = productos.length;
   $('r-bajo').textContent = productos.filter(esBajo).length;
@@ -222,9 +218,8 @@ function dibujarLista() {
 }
 
 // ------------------------------------------------------------------
-// 10. HELPERS DE CELDAS Y BOTONES - Crea elementos de la tabla
+// 10. HELPERS DE CELDAS Y BOTONES
 // ------------------------------------------------------------------
-// Rotulo es el texto que se ve en celular (responsive)
 function celda(texto, clase, rotulo) {
   const td = document.createElement('td');
   td.textContent = texto;
@@ -284,7 +279,6 @@ function actualizarNotaCotizacion() {
     : 'No se pudo obtener la cotización: el precio en USD no está disponible.';
 }
 
-// Pasa la fecha de YYYY-MM-DD a DD/MM/AAAA para mostrar
 function formatearFecha(iso) {
   if (!iso) return 'Sin vencimiento';
   const partes = iso.split('-');
@@ -324,10 +318,13 @@ function abrirFormulario(producto) {
 }
 
 // ------------------------------------------------------------------
-// 13. GUARDAR - Arma y envia datos al backend
+// 13. GUARDAR - Arma y envia datos al backend - CORREGIDO
 // ------------------------------------------------------------------
-// Convierte texto vacio a null, si no a numero
-const numero = (texto) => (texto === '' ? null : Number(texto));
+const numero = (texto) => {
+  if (texto === '' || texto === null || texto === undefined) return 0;
+  const n = Number(texto);
+  return isNaN(n) ? 0 : n;
+};
 
 function armarCuerpo() {
   return {
@@ -335,9 +332,9 @@ function armarCuerpo() {
     codigo_barras: campos.codigo_barras.value.trim(),
     cantidad_stock: numero(campos.cantidad_stock.value),
     stock_minimo: numero(campos.stock_minimo.value),
-    fecha_vencimiento: campos.fecha_vencimiento.value || null, // null si no tiene vendimiento
-    proveedor: campos.proveedor.value.trim(),
-    ubicacion: campos.ubicacion.value.trim(),
+    fecha_vencimiento: campos.fecha_vencimiento.value || null,
+    proveedor: campos.proveedor.value.trim() || 'General',
+    ubicacion: campos.ubicacion.value.trim() || 'Deposito',
     precio_unitario: numero(campos.precio_unitario.value),
   };
 }
@@ -355,7 +352,6 @@ async function guardar(evento) {
     const url = editando ? URL_API + '?id=' + encodeURIComponent(id) : URL_API;
     const datos = await apiFetch(url, editando ? 'PUT' : 'POST', cuerpo);
     el.dlgForm.close();
-    // aviso del backend
     const aviso = datos && datos.aviso;
     mostrarToast(aviso || (editando ? 'Producto actualizado' : 'Producto creado'));
     await cargarProductos();
@@ -386,7 +382,7 @@ async function confirmarBorrado() {
     await cargarProductos();
   } catch (e) {
     el.dlgBorrar.close();
-    if (e.status === 404) await cargarProductos(); // recargo antes para que no se borre el aviso
+    if (e.status === 404) await cargarProductos();
     mostrarAviso(e.message);
   } finally {
     el.borrarSi.disabled = false;
@@ -395,7 +391,7 @@ async function confirmarBorrado() {
 }
 
 // ------------------------------------------------------------------
-// 15. EVENTOS - Botones, buscador y filtros
+// 15. EVENTOS
 // ------------------------------------------------------------------
 $('btn-nuevo').addEventListener('click', () => abrirFormulario());
 $('btn-cancelar').addEventListener('click', () => el.dlgForm.close());
@@ -408,13 +404,13 @@ $('buscador').addEventListener('input', (e) => {
 });
 document.querySelectorAll('.tarjeta').forEach((t) => {
   t.addEventListener('click', () => {
-    filtro = t.dataset.filtro === filtro ? 'todos' : t.dataset.filtro; // si toca de nuevo, saca el filtro
+    filtro = t.dataset.filtro === filtro ? 'todos' : t.dataset.filtro;
     dibujarLista();
   });
 });
 
 // ------------------------------------------------------------------
-// 16. EFECTO CABECERA - Sombra y ocultar al scrollear
+// 16. EFECTO CABECERA
 // ------------------------------------------------------------------
 let ultimoScroll = 0;
 window.addEventListener('scroll', () => {
@@ -429,6 +425,6 @@ window.addEventListener('scroll', () => {
 }, { passive: true });
 
 // ------------------------------------------------------------------
-// 17. ARRANQUE - Carga inicial de datos
+// 17. ARRANQUE
 // ------------------------------------------------------------------
 cargarProductos();
