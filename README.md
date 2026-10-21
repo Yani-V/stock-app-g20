@@ -14,6 +14,7 @@ Docentes: Eduardo Mónaco · Heber Alonso
 - **URL pública:**  https://zafe-app-upso-g20-production.up.railway.app
 - **URL API Productos:** https://zafe-app-upso-g20-production.up.railway.app/api/productos.php
 - **URL API Cotización:** https://zafe-app-upso-g20-production.up.railway.app/api/cotizacion.php
+- Repositorio GitHub: https://github.com/Yani-V/zafe-app-upso-g20
 - **Proveedor Cloud:** Railway
 
 
@@ -24,6 +25,7 @@ Dibujos iniciales a mano para ordenar la idea del sistema, sin interfaz definida
 
 ### Bocetos y Wireframes
 
+![Boceto](wireframes/boceto.jpeg)
 
 ### Wireframes de baja fidelidad
 Estructura básica en papel, sin colores ni estilos, solo distribución de listado y formulario.
