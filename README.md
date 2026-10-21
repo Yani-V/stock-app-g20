@@ -21,7 +21,8 @@ Docentes: Eduardo Mónaco · Heber Alonso
 ### Bocetos en papel
 Dibujos iniciales a mano para ordenar la idea del sistema, sin interfaz definida.
 
-![Boceto en papel](wireframes/boceto.jpeg)
+### Bocetos y Wireframes
+![Boceto](wireframes/boceto.jpeg)
 
 ### Wireframes de baja fidelidad
 Estructura básica en papel, sin colores ni estilos, solo distribución de listado y formulario.
