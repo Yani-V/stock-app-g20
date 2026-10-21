@@ -11,10 +11,11 @@ Docentes: Eduardo Mónaco · Heber Alonso
 
 - **Tema:** Gestor de Stock
 - **Integrantes:** Ariel Mesarra - Velazquez Yanina - Del Fresno Luca - Cabrera Giuliana
-- **URL pública:** https://zafe-production.up.railway.app/
-- **URL API Productos:** https://zafe-production.up.railway.app/api/productos.php
-- **URL API Cotización:** https://zafe-production.up.railway.app/api/cotizacion.php
+- **URL pública:**  https://zafe-app-upso-g20-production.up.railway.app
+- **URL API Productos:** https://zafe-app-upso-g20-production.up.railway.app/api/productos.php
+- **URL API Cotización:** https://zafe-app-upso-g20-production.up.railway.app/api/cotizacion.php
 - **Proveedor Cloud:** Railway
+
 
 ## Bocetos y Wireframes
 
