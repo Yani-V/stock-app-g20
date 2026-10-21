@@ -1,11 +1,26 @@
 <?php
 // ZAFE - config.example.php
-// Instrucciones: copiar como config.php y completar con datos de Railway
-$_ENV['DB_HOST'] = getenv('DB_HOST') ?: 'localhost';
-$_ENV['DB_PORT'] = getenv('DB_PORT') ?: '3306';
-$_ENV['DB_NAME'] = getenv('DB_NAME') ?: 'zafe_db';
-$_ENV['DB_USER'] = getenv('DB_USER') ?: 'root';
-$_ENV['DB_PASS'] = getenv('DB_PASS') ?: '';
-$_ENV['RESEND_API_KEY'] = getenv('RESEND_API_KEY') ?: 're_...';
-$_ENV['EMAIL_AVISOS'] = getenv('EMAIL_AVISOS') ?: 'tu-email-de-prueba@gmail.com';
-$_ENV['ENTORNO'] = getenv('ENTORNO') ?: 'desarrollo';
+// Instrucciones: Copiar este archivo como config.php y completar los datos
+// Este archivo NO se sube a Railway. En Railway se usan Variables de entorno.
+
+// Base de datos - localhost
+define('DB_HOST', 'localhost');
+define('DB_PORT', '3306');
+define('DB_NAME', 'zafe_db');
+define('DB_USER', 'root');
+define('DB_PASS', '');
+
+// Base de datos - Railway (ejemplo de lo que va en Variables de Railway)
+// DB_HOST = mysql.railway.internal
+// DB_NAME = railway
+// DB_USER = root
+// DB_PASS = tu_pass_de_railway
+
+// Servicio de email Resend (opcional, si no está entra en modo simulación)
+define('RESEND_API_KEY', 're_...tu_clave...');
+define('EMAIL_AVISOS', 'tu-email@gmail.com');
+define('RESEND_FROM', 'onboarding@resend.dev');
+define('RESEND_TO', 'tu-email@gmail.com');
+
+// Entorno
+define('ENTORNO', 'desarrollo');
