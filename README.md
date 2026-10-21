@@ -23,7 +23,7 @@ Docentes: Eduardo Mónaco · Heber Alonso
 Dibujos iniciales a mano para ordenar la idea del sistema, sin interfaz definida.
 
 ### Bocetos y Wireframes
-![Boceto]()
+
 
 ### Wireframes de baja fidelidad
 Estructura básica en papel, sin colores ni estilos, solo distribución de listado y formulario.
