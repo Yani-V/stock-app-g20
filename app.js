@@ -7,8 +7,8 @@
 // 1. CONFIGURACION - URLs de la API
 // ------------------------------------------------------------------
 // Mismo dominio, sin CORS. Si uso live server: http://localhost/zafe/api/productos.php
-const URL_API = 'http://localhost/zafe/api/productos.php';
-const URL_COTIZACION = 'http://localhost/zafe/api/cotizacion.php';
+const URL_API = 'api/productos.php';
+const URL_COTIZACION = 'api/cotizacion.php';
 
 // ------------------------------------------------------------------
 // 2. ELEMENTOS DEL DOM - Referencias a elementos del HTML
