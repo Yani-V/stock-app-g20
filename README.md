@@ -76,7 +76,7 @@ Se leen con `getenv()` en `api/config.php`. Sin valores reales en el .zip.
 | ENTORNO | desarrollo / produccion |
 
 ## 5. Servicios externos
-- **Resend:** Lo llama el backend porque la clave no puede ir al navegador. Salen email y datos del producto. Si falla, queda en log.
+- **Resend:** Lo llama el backend para avisar por mail por stock bajo y por producto vencido.. Si falla, queda en log.
 - **DolarApi:** Lo llama el backend para evitar CORS/Mixed Content. No salen datos personales. Si falla, muestra "Cotización no disponible" y la app sigue.
 
 ## 6. Despliegue
@@ -87,7 +87,6 @@ Se leen con `getenv()` en `api/config.php`. Sin valores reales en el .zip.
 **Pasos para redeplegar sin GitHub:** `railway up` desde la carpeta local, o New Project > Deploy from GitHub si usan repo privado.
 
 ## 7. Limitaciones conocidas
-- Mails solo por stock bajo, no por vencimiento.
 - Sin login ni historial.
 - Resend de prueba solo llega al titular.
 - Avisa cada vez que queda bajo, aunque ya estaba bajo.
