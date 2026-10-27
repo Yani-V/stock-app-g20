@@ -70,7 +70,7 @@ Se leen con `getenv()` en `api/config.php`. Sin valores reales en el .zip.
 
 | Variable | Para qué sirve |
 |---|---|
-| DB_HOST, DB_PORT, DB_NAME, DB_USER, DB_PASS | Conexión MySQL |
+| DB_HOST, DB_PORT, DB_NAME, DB_USER, DB_PASSWORD | Conexión MySQL |
 | RESEND_API_KEY | Clave Resend mails |
 | EMAIL_AVISOS | Mail donde llegan avisos stock bajo |
 | ENTORNO | desarrollo / produccion |
