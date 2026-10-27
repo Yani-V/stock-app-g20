@@ -8,13 +8,13 @@ define('DB_HOST', 'localhost');
 define('DB_PORT', '3306');
 define('DB_NAME', 'zafe_db');
 define('DB_USER', 'root');
-define('DB_PASS', '');
+define('DB_PASSWORD', '');
 
 // Base de datos - Railway (ejemplo de lo que va en Variables de Railway)
 // DB_HOST = mysql.railway.internal
 // DB_NAME = railway
 // DB_USER = root
-// DB_PASS = tu_pass_de_railway
+// DB_PASSWORD = tu_pass_de_railway
 
 // Servicio de email Resend (opcional, si no está entra en modo simulación)
 define('RESEND_API_KEY', 're_...tu_clave...');
